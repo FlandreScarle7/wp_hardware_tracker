@@ -90,7 +90,7 @@ add_action('wp_enqueue_scripts', 'hardware_tracker_scripts');
 function hardware_tracker_scripts() {
     wp_enqueue_script(
         'hardware-tracker',
-        plugins_url('tracker.js', __FILE__),
+        plugins_url('/assets/tracker.js', __FILE__),
         [],
         '1.0',
         true
