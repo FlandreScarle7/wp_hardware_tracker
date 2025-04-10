@@ -1,19 +1,18 @@
 <?php
 /*
-Plugin Name: 硬件级访客记录
-Description: 记录操作系统/CPU架构/GPU信息/IP/时区
-Version: 1.0
+Plugin Name: 硬件级访客追踪 (开发版)
+Description: 开发环境专用版本
+Version: 1.0-dev
 Author: Hansjakob Florian
 */
 
-// 安全验证
 if (!defined('ABSPATH')) exit;
 
-// 创建数据库表
-register_activation_hook(__FILE__, 'hardware_tracker_create_table');
-function hardware_tracker_create_table() {
+// 开发版数据表
+register_activation_hook(__FILE__, 'hardware_tracker_dev_create_table');
+function hardware_tracker_dev_create_table() {
     global $wpdb;
-    $table_name = $wpdb->prefix . 'hardware_visitors';
+    $table_name = $wpdb->prefix . 'hardware_visitors_dev';
     $charset = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
@@ -37,10 +36,10 @@ function hardware_tracker_create_table() {
     dbDelta($sql);
 }
 
-// 数据入库函数
-function hardware_tracker_insert_data($data) {
+// 数据库操作
+function hardware_tracker_dev_insert_data($data) {
     global $wpdb;
-    $table = $wpdb->prefix . 'hardware_visitors';
+    $table = $wpdb->prefix . 'hardware_visitors_dev';
 
     $wpdb->insert($table, 
         [
@@ -64,40 +63,47 @@ function hardware_tracker_insert_data($data) {
 }
 
 // AJAX处理
-add_action('wp_ajax_hardware_tracker', 'hardware_tracker_handle');
-add_action('wp_ajax_nopriv_hardware_tracker', 'hardware_tracker_handle');
-function hardware_tracker_handle() {
-    check_ajax_referer('hardware_tracker_nonce', 'security');
+add_action('wp_ajax_hardware_tracker_dev', 'hardware_tracker_dev_handle');
+add_action('wp_ajax_nopriv_hardware_tracker_dev', 'hardware_tracker_dev_handle');
+function hardware_tracker_dev_handle() {
+    check_ajax_referer('hardware_tracker_dev_nonce', 'security');
 
     $data = [
-        'os_name'    => isset($_POST['os_name']) ? $_POST['os_name'] : 'unknown',
-        'os_version' => isset($_POST['os_version']) ? $_POST['os_version'] : 'unknown',
-        'cpu_arch'   => isset($_POST['cpu_arch']) ? $_POST['cpu_arch'] : 'unknown',
+        'os_name'    => $_POST['os_name'] ?? 'unknown',
+        'os_version' => $_POST['os_version'] ?? 'unknown',
+        'cpu_arch'   => $_POST['cpu_arch'] ?? 'unknown',
         'cpu_cores'  => isset($_POST['cpu_cores']) ? intval($_POST['cpu_cores']) : 0,
-        'gpu_vendor' => isset($_POST['gpu_vendor']) ? $_POST['gpu_vendor'] : 'unknown',
-        'gpu_model'  => isset($_POST['gpu_model']) ? $_POST['gpu_model'] : 'unknown',
+        'gpu_vendor' => $_POST['gpu_vendor'] ?? 'unknown',
+        'gpu_model'  => $_POST['gpu_model'] ?? 'unknown',
         'ip'         => $_SERVER['REMOTE_ADDR'],
-        'timezone'   => isset($_POST['timezone']) ? $_POST['timezone'] : 'unknown',
-        'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : ''
+        'timezone'   => $_POST['timezone'] ?? 'unknown',
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? ''
     ];
 
-    hardware_tracker_insert_data($data);
+    hardware_tracker_dev_insert_data($data);
     wp_send_json_success();
 }
 
-// 前端脚本
-add_action('wp_enqueue_scripts', 'hardware_tracker_scripts');
-function hardware_tracker_scripts() {
+// 前端资源
+add_action('wp_enqueue_scripts', 'hardware_tracker_dev_scripts');
+function hardware_tracker_dev_scripts() {
     wp_enqueue_script(
-        'hardware-tracker',
-        plugins_url('/assets/tracker.js', __FILE__),
+        'hardware-tracker-dev',
+        plugins_url('/assets/tracker-dev.js', __FILE__),
         [],
-        '1.0',
+        '1.0-dev',
         true
     );
 
-    wp_localize_script('hardware-tracker', 'hardwareTracker', [
+    wp_localize_script('hardware-tracker-dev', 'hardwareTrackerDev', [
         'ajax_url' => admin_url('admin-ajax.php'),
-        'security' => wp_create_nonce('hardware_tracker_nonce')
+        'security' => wp_create_nonce('hardware_tracker_dev_nonce')
     ]);
+}
+
+// 卸载处理
+register_uninstall_hook(__FILE__, 'hardware_tracker_dev_uninstall');
+function hardware_tracker_dev_uninstall() {
+    global $wpdb;
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}hardware_visitors_dev");
 }
