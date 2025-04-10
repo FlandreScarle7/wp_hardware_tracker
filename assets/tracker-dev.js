@@ -77,5 +77,5 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     setTimeout(collectData, 300);
-    # 延迟300ms错开稳定版
+    // 延迟300ms错开稳定版
 });
