@@ -84,6 +84,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // 延迟2秒执行避免影响首屏加载
     collectData();
 });
