@@ -1,0 +1,2 @@
+# wp_hardware_tracker
+WordPress硬件级访客记录插件
