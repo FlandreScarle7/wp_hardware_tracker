@@ -1,0 +1,43 @@
+.hardware-tracker-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.hardware-tracker-table th,
+.hardware-tracker-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    vertical-align: top;
+}
+.hardware-tracker-table td .alert {
+    color: red;
+    font-weight: bold;
+}
+button {
+    margin-top: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+}
+.modal-content {
+    background: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    width: 400px;
+    position: relative;
+}
+.modal .close {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.time-group div { margin: 2px 0; }
+.geo-info div { margin: 3px 0; }
+.timezone-warning { background: #fff3e0; padding: 5px; border-radius: 3px; }
+.no-data { text-align: center; color: #666; padding: 20px !important; }
