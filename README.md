@@ -1,6 +1,5 @@
-# WordPress硬件级访客记录插件
+# WordPress硬件级访客记录插件(WordPress Hardware Visitor Tracker)
 该插件最初开发目的在于解决自己被视奸烦恼(雾   
-# WordPress Hardware Visitor Tracker
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
